@@ -1,13 +1,18 @@
 import { useEffect, useState } from "react";
 import AdminOrders from "./AdminOrders";
-
+import AdminLogin from "./AdminLogin";
 
 function App() {
   const [products, setProducts] = useState([]);
  const [cart, setCart] = useState(() => {
   const savedCart = localStorage.getItem("cart");
   return savedCart ? JSON.parse(savedCart) : [];
+  
+
 });
+const [isAdmin, setIsAdmin] = useState(
+  !!localStorage.getItem("admin")
+);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -90,13 +95,22 @@ function App() {
   setCart([]);
 };
 
+  
   return (
   <>
-    <AdminOrders />
+    {isAdmin ? (
+      <AdminOrders />
+    ) : (
+      <AdminLogin
+        onLogin={() => {
+          localStorage.setItem("admin", "true");
+          setIsAdmin(true);
+        }}
+      />
+    )}
 
-
-    
     <div style={{ padding: 20, fontFamily: "Arial" }}>
+
       <h1>🛍 Products</h1>
 
       {loading && <p>Loading products...</p>}
