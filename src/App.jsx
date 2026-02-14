@@ -96,11 +96,13 @@ function App() {
       <div
   style={{
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+    gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
     gap: 20,
-    marginTop: 20
+    marginTop: 20,
+    width: "100%"
   }}
 >
+
   {products.map((p) => (
     <div
       key={p._id}
