@@ -102,7 +102,6 @@ function App() {
     width: "100%"
   }}
 >
-
   {products.map((p) => (
     <div
       key={p._id}
@@ -110,7 +109,7 @@ function App() {
         border: "1px solid #ddd",
         borderRadius: 10,
         padding: 12,
-        background: "#111",
+        background: "#111"
       }}
     >
       <img
@@ -118,33 +117,22 @@ function App() {
         alt={p.name}
         style={{
           width: "100%",
-          height: 150,
+          height: 180,
           objectFit: "cover",
-          borderRadius: 8,
-          marginBottom: 10
+          borderRadius: 8
         }}
       />
 
-      <h3 style={{ margin: "6px 0" }}>{p.name}</h3>
+      <h3>{p.name}</h3>
       <p>₹{p.price}</p>
 
-      <button
-        onClick={() => addToCart(p)}
-        style={{
-          marginTop: 8,
-          padding: "6px 12px",
-          background: "black",
-          color: "white",
-          border: "1px solid white",
-          borderRadius: 6,
-          cursor: "pointer"
-        }}
-      >
+      <button onClick={() => addToCart(p)}>
         Add to cart
       </button>
     </div>
   ))}
 </div>
+
 
 
       <hr />
