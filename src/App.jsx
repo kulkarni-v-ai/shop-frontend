@@ -87,7 +87,16 @@ function App() {
   };
 
   return (
-    <div style={{ padding: 20, fontFamily: "Arial" }}>
+    <div
+  style={{
+    padding: 20,
+    fontFamily: "Arial",
+    width: "100%",
+    maxWidth: "1400px",
+    margin: "0 auto"
+  }}
+>
+
       <h1>🛍 Products</h1>
 
       {loading && <p>Loading products...</p>}
