@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
+import "./App.css";
+
 
 function App() {
+  const [selectedCategory, setSelectedCategory] = useState("All");
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState(() => {
     const savedCart = localStorage.getItem("cart");
@@ -97,6 +100,16 @@ function App() {
   }}
 >
 
+<select
+  value={selectedCategory}
+  onChange={(e) => setSelectedCategory(e.target.value)}
+>
+  <option value="All">All</option>
+  <option value="Clothing">Clothing</option>
+  <option value="Accessories">Accessories</option>
+  <option value="Electronics">Electronics</option>
+</select>
+
       <h1>🛍 Products</h1>
 
       {loading && <p>Loading products...</p>}
@@ -105,41 +118,37 @@ function App() {
       <div
   style={{
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+    gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
     gap: 20,
     marginTop: 20,
     width: "100%"
   }}
 >
-  {products.map((p) => (
-    <div
-      key={p._id}
-      style={{
-        border: "1px solid #ddd",
-        borderRadius: 10,
-        padding: 12,
-        background: "#111"
-      }}
-    >
-      <img
-        src={p.image}
-        alt={p.name}
-        style={{
-          width: "100%",
-          height: 180,
-          objectFit: "cover",
-          borderRadius: 8
-        }}
-      />
+ {products
+  .filter(p =>
+    selectedCategory === "All"
+      ? true
+      : p.category === selectedCategory
+  )
+  .map((p) => (
 
-      <h3>{p.name}</h3>
-      <p>₹{p.price}</p>
+  <div key={p._id} className="product-card">
+    
+    <img
+      src={p.image}
+      alt={p.name}
+      className="product-image"
+    />
 
-      <button onClick={() => addToCart(p)}>
-        Add to cart
-      </button>
-    </div>
-  ))}
+    <h3>{p.name}</h3>
+    <p>₹{p.price}</p>
+
+    <button className="add-btn" onClick={() => addToCart(p)}>
+      Add to cart
+    </button>
+  </div>
+))}
+
 </div>
 
 
