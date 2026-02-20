@@ -1,6 +1,11 @@
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useEffect, useState } from "react";
-import "./App.css";
 
+import Home from "./Home";
+import Cart from "./Cart";
+import Checkout from "./Checkout";
+import ProductDetails from "./ProductDetails";
+import "./App.css";
 
 function App() {
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -90,101 +95,58 @@ function App() {
   };
 
   return (
-    <div
-  style={{
-    padding: 20,
-    fontFamily: "Arial",
-    width: "100%",
-    maxWidth: "1400px",
-    margin: "0 auto"
-  }}
->
+    <Router>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <Home
+              selectedCategory={selectedCategory}
+              setSelectedCategory={setSelectedCategory}
+              products={products}
+              loading={loading}
+              error={error}
+              addToCart={addToCart}
+            />
+          }
+        />
 
-<select
-  value={selectedCategory}
-  onChange={(e) => setSelectedCategory(e.target.value)}
->
-  <option value="All">All</option>
-  <option value="Clothing">Clothing</option>
-  <option value="Accessories">Accessories</option>
-  <option value="Electronics">Electronics</option>
-</select>
+        <Route
+          path="/cart"
+          element={
+            <Cart
+              cart={cart}
+              total={total}
+              totalItems={totalItems}
+              increaseQty={increaseQty}
+              decreaseQty={decreaseQty}
+              removeItem={removeItem}
+            />
+          }
+        />
 
-      <h1>🛍 Products</h1>
+        <Route
+          path="/checkout"
+          element={
+            <Checkout
+              cart={cart}
+              total={total}
+              checkout={checkout}
+            />
+          }
+        />
 
-      {loading && <p>Loading products...</p>}
-      {error && <p>{error}</p>}
-
-      <div
-  style={{
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
-    gap: 20,
-    marginTop: 20,
-    width: "100%"
-  }}
->
- {products
-  .filter(p =>
-    selectedCategory === "All"
-      ? true
-      : p.category === selectedCategory
-  )
-  .map((p) => (
-
-  <div key={p._id} className="product-card">
-    
-    <img
-      src={p.image}
-      alt={p.name}
-      className="product-image"
-    />
-
-    <h3>{p.name}</h3>
-    <p>₹{p.price}</p>
-
-    <button className="add-btn" onClick={() => addToCart(p)}>
-      Add to cart
-    </button>
-  </div>
-))}
-
-</div>
-
-
-
-      <hr />
-
-      <h2>🛒 Cart ({totalItems} items)</h2>
-      {cart.length === 0 && <p>Cart is empty</p>}
-
-      {cart.map((item) => (
-        <div key={item._id}>
-          <strong>{item.name}</strong> × {item.qty} = ₹{item.price * item.qty}
-
-          <button onClick={() => increaseQty(item._id)}>+</button>
-          <button onClick={() => decreaseQty(item._id)}>−</button>
-          <button onClick={() => removeItem(item._id)}>Remove</button>
-        </div>
-      ))}
-
-      <h3>Total: ₹{total}</h3>
-
-      <button
-        onClick={checkout}
-        style={{
-          marginTop: 15,
-          padding: "10px 18px",
-          background: "green",
-          color: "white",
-          border: "none",
-          borderRadius: 6,
-          cursor: "pointer"
-        }}
-      >
-        Checkout
-      </button>
-    </div>
+        <Route
+          path="/product/:id"
+          element={
+            <ProductDetails
+              products={products}
+              addToCart={addToCart}
+            />
+          }
+        />
+      </Routes>
+    </Router>
   );
 }
 

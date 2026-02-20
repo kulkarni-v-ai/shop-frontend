@@ -15,23 +15,29 @@ useEffect(() => {
 }, []);
 
 const updateStatus = async (id, status) => {
-    try {
-      await fetch(`https://shop-backend-yvk4.onrender.com/api/orders/${id}`, {
+  try {
+    await fetch(
+      `https://shop-backend-yvk4.onrender.com/api/orders/${id}`,
+      {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ status }),
-      });
+      }
+    );
 
-      const res = await fetch("https://shop-backend-yvk4.onrender.com/api/orders");
-      const data = await res.json();
-      setOrders(data);
+    // Refetch updated orders
+    const res = await fetch(
+      "https://shop-backend-yvk4.onrender.com/api/orders"
+    );
+    const data = await res.json();
+    setOrders(data);
 
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  } catch (err) {
+    console.log("Update failed:", err);
+  }
+};
 
 return (
   <div style={{ padding: 20 }}>
