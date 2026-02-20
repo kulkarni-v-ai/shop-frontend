@@ -1,10 +1,19 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 function ProductDetails({ products, addToCart }) {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const product = products.find((p) => p._id === id);
+
+  useEffect(() => {
+    if (id) {
+      // Fire-and-forget view increment
+      fetch(`https://shop-backend-yvk4.onrender.com/api/products/${id}/view`, { method: "POST" })
+        .catch(() => { }); // Fail silently
+    }
+  }, [id]);
 
   if (!product) {
     return (
