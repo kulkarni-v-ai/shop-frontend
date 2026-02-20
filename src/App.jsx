@@ -1,10 +1,10 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useEffect, useState } from "react";
-
-import Home from "./Home";
-import Cart from "./Cart";
-import Checkout from "./Checkout";
-import ProductDetails from "./ProductDetails";
+import Navbar from "./components/Navbar";
+import Home from "./pages/Home";
+import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
+import ProductDetails from "./pages/ProductDetails";
 import "./App.css";
 
 function App() {
@@ -96,6 +96,40 @@ function App() {
 
   return (
     <Router>
+      <Router>
+  <Navbar totalItems={totalItems} />
+
+  <Routes>
+    <Route path="/" element={
+      <Home
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
+        products={products}
+        loading={loading}
+        error={error}
+        addToCart={addToCart}
+      />
+    } />
+
+    <Route path="/cart" element={
+      <Cart
+        cart={cart}
+        increaseQty={increaseQty}
+        decreaseQty={decreaseQty}
+        removeItem={removeItem}
+        total={total}
+      />
+    } />
+
+    <Route path="/checkout" element={
+      <Checkout
+        cart={cart}
+        total={total}
+        checkout={checkout}
+      />
+    } />
+  </Routes>
+</Router>
       <Routes>
         <Route
           path="/"
