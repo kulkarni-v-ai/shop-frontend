@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 
 function Navbar({ totalItems, user, logout, selectedCategory, setSelectedCategory, searchQuery, setSearchQuery }) {
-  const categories = ["All", "Electronics", "Clothing", "Home", "Books", "Sports", "Beauty"];
+  const categories = ["All", "Posters", "Stickers", "Artifacts"];
 
   return (
     <nav className="navbar">
