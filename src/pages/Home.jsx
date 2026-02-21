@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 function Home({
   selectedCategory,
@@ -10,6 +11,19 @@ function Home({
   searchQuery
 }) {
   const navigate = useNavigate();
+  const [takingLong, setTakingLong] = useState(false);
+
+  useEffect(() => {
+    let timer;
+    if (loading) {
+      timer = setTimeout(() => {
+        setTakingLong(true);
+      }, 4000); // 4 seconds
+    } else {
+      setTakingLong(false);
+    }
+    return () => clearTimeout(timer);
+  }, [loading]);
 
   // Generate pseudo-random stars for visual display
   const getStars = (id) => {
@@ -41,7 +55,7 @@ function Home({
         : true
     );
 
-  if (loading) {
+  if (loading && products.length === 0) {
     return (
       <div>
         {/* Hero Banner */}
@@ -51,7 +65,17 @@ function Home({
             <h1 className="hero-title">
               Discover <span>Amazing Deals</span> Every Day
             </h1>
-            <p className="hero-subtitle">Loading the best products for you...</p>
+            <p className="hero-subtitle">
+              {takingLong
+                ? "Connecting to our secure servers... This might take a few seconds on first load."
+                : "Loading the best products for you..."}
+            </p>
+            {takingLong && (
+              <div className="loading-spinner-container">
+                <div className="loading-spinner"></div>
+                <p className="loading-hint">Waking up server 🚀</p>
+              </div>
+            )}
           </div>
         </div>
 

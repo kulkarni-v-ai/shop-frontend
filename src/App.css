@@ -1608,3 +1608,44 @@
     max-width: 100%;
   }
 }
+
+/* ==============================
+   GOOGLE LOGIN & LOADING
+================================ */
+.google-login-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-md);
+  padding: var(--space-sm);
+  background: #f9f9f9;
+  border-radius: var(--radius-md);
+  border: 1px dashed #ddd;
+}
+
+.loading-spinner-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-xl);
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255, 153, 0, 0.1);
+  border-left-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-hint {
+  font-size: var(--font-size-sm);
+  color: var(--color-accent);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

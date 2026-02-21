@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { GoogleLogin } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
 import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
@@ -7,7 +9,7 @@ const Login = () => {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
-    const { login } = useAuth();
+    const { login, syncGoogleAuth } = useAuth();
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
@@ -36,6 +38,23 @@ const Login = () => {
             setError("Something went wrong. Please try again.");
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleGoogleSuccess = async (credentialResponse) => {
+        const decoded = jwtDecode(credentialResponse.credential);
+        const googleData = {
+            name: decoded.name,
+            email: decoded.email,
+            googleId: decoded.sub,
+            avatar: decoded.picture
+        };
+
+        const result = await syncGoogleAuth(googleData);
+        if (result.success) {
+            navigate("/");
+        } else {
+            setError(result.message || "Google Authentication failed");
         }
     };
 
@@ -79,10 +98,15 @@ const Login = () => {
                     <span>OR</span>
                 </div>
 
-                <button className="google-button">
-                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" />
-                    Continue with Google
-                </button>
+                <div className="google-login-wrapper">
+                    <GoogleLogin
+                        onSuccess={handleGoogleSuccess}
+                        onError={() => setError("Google Login Failed")}
+                        useOneTap
+                        theme="filled_black"
+                        shape="pill"
+                    />
+                </div>
 
                 <p className="auth-footer">
                     Don't have an account? <Link to="/signup">Sign Up</Link>
