@@ -102,9 +102,17 @@ function App() {
 
   const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
 
-  const checkout = async () => {
+  const checkout = async (userData) => {
     const token = localStorage.getItem("token");
     try {
+      const shippingAddress = userData?.address ? {
+        name: userData.name,
+        street: userData.address.street,
+        city: userData.address.city,
+        state: userData.address.state,
+        zip: userData.address.zip
+      } : null;
+
       await fetch("https://shop-backend-yvk4.onrender.com/api/orders", {
         method: "POST",
         headers: {
@@ -114,6 +122,8 @@ function App() {
         body: JSON.stringify({
           items: cart,
           total: total,
+          userId: userData?._id,
+          shippingAddress
         }),
       });
 

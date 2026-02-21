@@ -4,8 +4,15 @@ import { useAuth } from "../context/AuthContext";
 const Profile = ({ showToast }) => {
     const { user, login } = useAuth();
     const [name, setName] = useState(user?.name || "");
+    const [address, setAddress] = useState({
+        street: user?.address?.street || "",
+        city: user?.address?.city || "",
+        state: user?.address?.state || "",
+        zip: user?.address?.zip || ""
+    });
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [showSecurity, setShowSecurity] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
@@ -29,6 +36,7 @@ const Profile = ({ showToast }) => {
                 },
                 body: JSON.stringify({
                     name,
+                    address,
                     ...(password && { password })
                 })
             });
@@ -37,11 +45,12 @@ const Profile = ({ showToast }) => {
 
             if (response.ok) {
                 // Update local user state
-                const updatedUser = { ...user, name: data.name };
+                const updatedUser = { ...user, name: data.name, address: data.address };
                 login(updatedUser, token);
                 showToast("✓ Profile updated successfully");
                 setPassword("");
                 setConfirmPassword("");
+                setShowSecurity(false);
             } else {
                 setError(data.message || "Failed to update profile");
             }
@@ -54,58 +63,114 @@ const Profile = ({ showToast }) => {
 
     return (
         <div className="login-container">
-            <div className="login-box" style={{ maxWidth: "500px" }}>
-                <h2 className="login-title">My Profile</h2>
-                <p className="login-subtitle">Update your account information</p>
+            <div className="login-box" style={{ maxWidth: "600px", width: "95%" }}>
+                <h2 className="login-title">My Account</h2>
+                <p className="login-subtitle">Manage your personal information and shipping address</p>
 
                 {error && <div className="error-message">{error}</div>}
 
                 <form onSubmit={handleUpdateProfile} className="login-form">
-                    <div className="form-group">
-                        <label>Email Address (Cannot be changed)</label>
-                        <input type="email" value={user?.email || ""} disabled style={{ backgroundColor: "#f3f4f6" }} />
-                    </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-md)" }}>
+                        <div className="form-group" style={{ gridColumn: "span 2" }}>
+                            <label>Email Address</label>
+                            <input type="email" value={user?.email || ""} disabled style={{ backgroundColor: "#f3f4f6", cursor: "not-allowed" }} title="Email cannot be changed" />
+                        </div>
 
-                    <div className="form-group">
-                        <label>Full Name</label>
-                        <input
-                            type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            placeholder="Your Name"
-                            required
-                        />
-                    </div>
-
-                    <div style={{ marginTop: "var(--space-lg)", paddingTop: "var(--space-md)", borderTop: "1px solid var(--color-border-light)" }}>
-                        <p style={{ fontSize: "var(--font-size-xs)", fontWeight: "bold", color: "var(--color-text-light)", marginBottom: "var(--space-sm)" }}>
-                            CHANGE PASSWORD (Leave blank to keep current)
-                        </p>
-
-                        <div className="form-group">
-                            <label>New Password</label>
+                        <div className="form-group" style={{ gridColumn: "span 2" }}>
+                            <label>Full Name</label>
                             <input
-                                type="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                placeholder="••••••••"
-                                minLength={6}
+                                type="text"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                placeholder="Your Name"
+                                required
+                            />
+                        </div>
+
+                        <h3 style={{ gridColumn: "span 2", fontSize: "var(--font-size-sm)", color: "var(--color-primary)", marginTop: "var(--space-md)", borderBottom: "1px solid var(--color-border-light)", paddingBottom: "var(--space-xs)" }}> Shipping Address</h3>
+
+                        <div className="form-group" style={{ gridColumn: "span 2" }}>
+                            <label>Street Address</label>
+                            <input
+                                type="text"
+                                value={address.street}
+                                onChange={(e) => setAddress({ ...address, street: e.target.value })}
+                                placeholder="123 Main St"
                             />
                         </div>
 
                         <div className="form-group">
-                            <label>Confirm New Password</label>
+                            <label>City</label>
                             <input
-                                type="password"
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                                placeholder="••••••••"
+                                type="text"
+                                value={address.city}
+                                onChange={(e) => setAddress({ ...address, city: e.target.value })}
+                                placeholder="City"
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label>State</label>
+                            <input
+                                type="text"
+                                value={address.state}
+                                onChange={(e) => setAddress({ ...address, state: e.target.value })}
+                                placeholder="State"
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label>Zip Code</label>
+                            <input
+                                type="text"
+                                value={address.zip}
+                                onChange={(e) => setAddress({ ...address, zip: e.target.value })}
+                                placeholder="Zip"
                             />
                         </div>
                     </div>
 
-                    <button type="submit" className="login-button" disabled={loading}>
-                        {loading ? "Updating..." : "Update Profile"}
+                    <div style={{ marginTop: "var(--space-lg)", borderTop: "1px solid var(--color-border-light)", paddingTop: "var(--space-md)" }}>
+                        <button
+                            type="button"
+                            onClick={() => setShowSecurity(!showSecurity)}
+                            style={{
+                                background: "none", border: "none", color: "var(--color-primary)",
+                                cursor: "pointer", fontSize: "var(--font-size-xs)", fontWeight: "bold",
+                                display: "flex", alignItems: "center", gap: "5px", padding: 0
+                            }}
+                        >
+                            {showSecurity ? "▼ Hide Security Tools" : "▶ Account Security Tools"}
+                        </button>
+
+                        {showSecurity && (
+                            <div className="fade-in" style={{ marginTop: "var(--space-md)", backgroundColor: "#f9fafb", padding: "15px", borderRadius: "8px" }}>
+                                <div className="form-group">
+                                    <label>New Password</label>
+                                    <input
+                                        type="password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        placeholder="••••••••"
+                                        minLength={6}
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label>Confirm New Password</label>
+                                    <input
+                                        type="password"
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        placeholder="••••••••"
+                                    />
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    <button type="submit" className="login-button" style={{ marginTop: "var(--space-lg)" }} disabled={loading}>
+                        {loading ? "Updating..." : "Save Changes"}
                     </button>
                 </form>
             </div>

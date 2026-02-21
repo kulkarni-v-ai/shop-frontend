@@ -70,7 +70,7 @@ function Checkout({ cart, total, checkout }) {
           <span>₹{orderTotal.toLocaleString()}</span>
         </div>
 
-        <button className="btn-place-order" onClick={checkout}>
+        <button className="btn-place-order" onClick={() => checkout(user)}>
           Place Your Order
         </button>
 
