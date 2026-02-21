@@ -30,9 +30,15 @@ function Navbar({ totalItems, selectedCategory, setSelectedCategory, searchQuery
         {/* Right Actions */}
         <div className="navbar-actions">
           {user ? (
-            <div className="navbar-link" onClick={logout} style={{ cursor: "pointer" }}>
-              <span className="navbar-link-small">Hello, {user.name}</span>
-              <span className="navbar-link-bold">Sign Out</span>
+            <div style={{ display: "flex", gap: "var(--space-md)", alignItems: "center" }}>
+              <Link to="/profile" className="navbar-link">
+                <span className="navbar-link-small">Hello, {user.name}</span>
+                <span className="navbar-link-bold">My Account</span>
+              </Link>
+              <div className="navbar-link" onClick={logout} style={{ cursor: "pointer" }}>
+                <span className="navbar-link-small">&nbsp;</span>
+                <span className="navbar-link-bold">Sign Out</span>
+              </div>
             </div>
           ) : (
             <Link to="/login" className="navbar-link">
