@@ -14,7 +14,36 @@ const Profile = ({ showToast }) => {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [showSecurity, setShowSecurity] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [fetchingPincode, setFetchingPincode] = useState(false);
     const [error, setError] = useState("");
+
+    // Auto-identify city and state based on pincode
+    useEffect(() => {
+        const fetchLocation = async () => {
+            if (address.zip && address.zip.length === 6) {
+                try {
+                    setFetchingPincode(true);
+                    const res = await fetch(`https://api.postalpincode.in/pincode/${address.zip}`);
+                    const data = await res.json();
+
+                    if (data[0].Status === "Success") {
+                        const postOffice = data[0].PostOffice[0];
+                        setAddress(prev => ({
+                            ...prev,
+                            city: postOffice.District,
+                            state: postOffice.State
+                        }));
+                    }
+                } catch (err) {
+                    console.error("Pincode lookup failed", err);
+                } finally {
+                    setFetchingPincode(false);
+                }
+            }
+        };
+
+        fetchLocation();
+    }, [address.zip]);
 
     const handleUpdateProfile = async (e) => {
         e.preventDefault();
@@ -120,11 +149,11 @@ const Profile = ({ showToast }) => {
                         </div>
 
                         <div className="form-group">
-                            <label>Zip Code</label>
+                            <label>Zip Code {fetchingPincode && <span style={{ color: "var(--color-primary)", fontSize: "10px" }}>(Looking up...)</span>}</label>
                             <input
                                 type="text"
                                 value={address.zip}
-                                onChange={(e) => setAddress({ ...address, zip: e.target.value })}
+                                onChange={(e) => setAddress({ ...address, zip: e.target.value.replace(/\D/g, '').slice(0, 6) })}
                                 placeholder="Zip"
                             />
                         </div>
