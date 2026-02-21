@@ -6,6 +6,9 @@ import Home from "./pages/Home";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import ProductDetails from "./pages/ProductDetails";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import { AuthProvider } from "./context/AuthContext";
 import "./App.css";
 
 function App() {
@@ -86,10 +89,12 @@ function App() {
   const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
 
   const checkout = async () => {
+    const token = localStorage.getItem("token");
     await fetch("https://shop-backend-yvk4.onrender.com/api/orders", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
       },
       body: JSON.stringify({
         items: cart,
@@ -102,74 +107,79 @@ function App() {
   };
 
   return (
-    <Router>
-      <Navbar
-        totalItems={totalItems}
-        selectedCategory={selectedCategory}
-        setSelectedCategory={setSelectedCategory}
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-      />
+    <AuthProvider>
+      <Router>
+        <Navbar
+          totalItems={totalItems}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+        />
 
-      <main className="main-content">
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <Home
-                selectedCategory={selectedCategory}
-                setSelectedCategory={setSelectedCategory}
-                products={products}
-                loading={loading}
-                error={error}
-                addToCart={addToCart}
-                searchQuery={searchQuery}
-              />
-            }
-          />
+        <main className="main-content">
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <Home
+                  selectedCategory={selectedCategory}
+                  setSelectedCategory={setSelectedCategory}
+                  products={products}
+                  loading={loading}
+                  error={error}
+                  addToCart={addToCart}
+                  searchQuery={searchQuery}
+                />
+              }
+            />
 
-          <Route
-            path="/cart"
-            element={
-              <Cart
-                cart={cart}
-                total={total}
-                totalItems={totalItems}
-                increaseQty={increaseQty}
-                decreaseQty={decreaseQty}
-                removeItem={removeItem}
-              />
-            }
-          />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
 
-          <Route
-            path="/checkout"
-            element={
-              <Checkout
-                cart={cart}
-                total={total}
-                checkout={checkout}
-              />
-            }
-          />
+            <Route
+              path="/cart"
+              element={
+                <Cart
+                  cart={cart}
+                  total={total}
+                  totalItems={totalItems}
+                  increaseQty={increaseQty}
+                  decreaseQty={decreaseQty}
+                  removeItem={removeItem}
+                />
+              }
+            />
 
-          <Route
-            path="/product/:id"
-            element={
-              <ProductDetails
-                products={products}
-                addToCart={addToCart}
-              />
-            }
-          />
-        </Routes>
-      </main>
+            <Route
+              path="/checkout"
+              element={
+                <Checkout
+                  cart={cart}
+                  total={total}
+                  checkout={checkout}
+                />
+              }
+            />
 
-      <Footer />
+            <Route
+              path="/product/:id"
+              element={
+                <ProductDetails
+                  products={products}
+                  addToCart={addToCart}
+                />
+              }
+            />
+          </Routes>
+        </main>
 
-      {/* Toast Notification */}
-      {toast && <div className="toast">{toast}</div>}
-    </Router>
+        <Footer />
+
+        {/* Toast Notification */}
+        {toast && <div className="toast">{toast}</div>}
+      </Router>
+    </AuthProvider>
   );
 }
 

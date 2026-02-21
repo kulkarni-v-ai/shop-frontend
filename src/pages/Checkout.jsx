@@ -1,9 +1,14 @@
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 function Checkout({ cart, total, checkout }) {
+  const { user, loading } = useAuth();
   const deliveryFee = total >= 499 ? 0 : 40;
   const orderTotal = total + deliveryFee;
   const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+
+  if (loading) return <div className="loading">Loading...</div>;
+  if (!user) return <Navigate to="/login" />;
 
   if (cart.length === 0) {
     return (

@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
-function Navbar({ totalItems, user, logout, selectedCategory, setSelectedCategory, searchQuery, setSearchQuery }) {
+function Navbar({ totalItems, selectedCategory, setSelectedCategory, searchQuery, setSearchQuery }) {
+  const { user, logout } = useAuth();
   const categories = ["All", "Posters", "Stickers", "Artifacts"];
 
   return (
@@ -29,7 +31,7 @@ function Navbar({ totalItems, user, logout, selectedCategory, setSelectedCategor
         <div className="navbar-actions">
           {user ? (
             <div className="navbar-link" onClick={logout} style={{ cursor: "pointer" }}>
-              <span className="navbar-link-small">Hello, {user.username}</span>
+              <span className="navbar-link-small">Hello, {user.name}</span>
               <span className="navbar-link-bold">Sign Out</span>
             </div>
           ) : (
