@@ -17,6 +17,24 @@ const Profile = ({ showToast }) => {
     const [fetchingPincode, setFetchingPincode] = useState(false);
     const [error, setError] = useState("");
 
+    const getPasswordStrength = (pwd) => {
+        if (!pwd) return { score: 0, label: "", color: "transparent" };
+        let score = 0;
+        if (pwd.length > 7) score++;
+        if (/[A-Z]/.test(pwd)) score++;
+        if (/[0-9]/.test(pwd)) score++;
+        if (/[^A-Za-z0-9]/.test(pwd)) score++;
+
+        const map = [
+            { label: "Very Weak", color: "#ef4444" },
+            { label: "Weak", color: "#f97316" },
+            { label: "Fair", color: "#eab308" },
+            { label: "Good", color: "#22c55e" },
+            { label: "Strong", color: "#10b981" }
+        ];
+        return { score, ...map[score] };
+    };
+
     // Auto-identify city and state based on pincode
     useEffect(() => {
         const fetchLocation = async () => {
