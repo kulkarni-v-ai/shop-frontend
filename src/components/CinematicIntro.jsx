@@ -73,24 +73,40 @@ const CinematicIntro = ({ onComplete }) => {
         window.addEventListener('click', handleInteraction, { once: true });
         window.addEventListener('mousemove', handleMouseMove);
 
-        const drawEye = (cx, cy, elapsed) => {
+        const drawEye = (cx, cy, elapsed, eyeOpenFactor) => {
+            if (eyeOpenFactor <= 0) return; // Completely hidden before found
+
             // Inner Breathing Scale
             const scale = 1 + Math.sin(elapsed * 0.002) * 0.02;
 
             ctx.save();
             
+            // Outer subtle glow (only when opening/open)
+            if (eyeOpenFactor > 0.01) {
+                const gradient = ctx.createRadialGradient(cx, cy, 5, cx, cy, 150 * scale);
+                gradient.addColorStop(0, `rgba(212, 175, 55, ${0.15 * eyeOpenFactor})`);
+                gradient.addColorStop(1, 'rgba(5, 2, 10, 0)');
+                
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(cx, cy, 150 * scale, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
             // 1. Draw Almond Shape (White Outline)
             ctx.beginPath();
             ctx.moveTo(cx - 200 * scale, cy);
-            ctx.quadraticCurveTo(cx, cy - 150 * scale, cx + 200 * scale, cy);
-            ctx.quadraticCurveTo(cx, cy + 150 * scale, cx - 200 * scale, cy);
+            // Openness affects the Y control points (Blinking)
+            ctx.quadraticCurveTo(cx, cy - (150 * scale * eyeOpenFactor), cx + 200 * scale, cy);
+            ctx.quadraticCurveTo(cx, cy + (150 * scale * eyeOpenFactor), cx - 200 * scale, cy);
+            ctx.closePath();
             
             // Stroke the almond
-            ctx.strokeStyle = '#ffffff';
+            ctx.strokeStyle = `rgba(255, 255, 255, ${eyeOpenFactor})`; // Fade in stroke naturally
             ctx.lineWidth = 2;
             ctx.stroke();
 
-            // Clip inner region for iris
+            // Clip inner region for iris so it is hidden when closed
             ctx.clip();
 
             // 2. Iris Base (Gold Radial Gradient)
@@ -116,7 +132,7 @@ const CinematicIntro = ({ onComplete }) => {
                 ctx.stroke();
             }
 
-            // Smooth Pupil Tracking Logic
+            // Smooth Pupil Tracking Logic with active clamping during tracking
             const dx = mouseRef.current.x - cx;
             const dy = mouseRef.current.y - cy;
             const distance = Math.sqrt(dx * dx + dy * dy);
@@ -150,22 +166,23 @@ const CinematicIntro = ({ onComplete }) => {
             ctx.restore();
         };
 
-        const drawTypographyAndScroll = (cx, cy, elapsed) => {
+        const drawTypographyAndScroll = (cx, cy, elapsed, textAlpha) => {
+            if (textAlpha <= 0) return;
+
             // HOUSE OF VISUALS
-            ctx.fillStyle = '#ffffff';
+            ctx.fillStyle = `rgba(255, 255, 255, ${textAlpha})`;
             ctx.font = '900 48px "Inter", sans-serif';
-            ctx.letterSpacing = '14px'; // Native canvas letterSpacing support (modern browsers)
-            // Polyfill spacing if native not fully perfect, but modern canvas supports it
+            ctx.letterSpacing = '14px'; 
             ctx.fillText('HOUSE OF VISUALS', cx, cy + 160);
             
             // We see what brands miss.
-            ctx.fillStyle = '#d4af37';
+            ctx.fillStyle = `rgba(212, 175, 55, ${textAlpha})`;
             ctx.font = '400 16px "Inter", sans-serif';
             ctx.letterSpacing = '2px';
             ctx.fillText('We see what brands miss.', cx, cy + 220);
 
             // Scroll indicator (Mouse rounded rect + dot)
-            ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+            ctx.strokeStyle = `rgba(255, 255, 255, ${0.4 * textAlpha})`;
             ctx.lineWidth = 2;
             ctx.beginPath();
             if (ctx.roundRect) {
@@ -177,7 +194,7 @@ const CinematicIntro = ({ onComplete }) => {
 
             // Oscillating Dot
             const dotY = cy + 295 + Math.sin(elapsed * 0.005) * 8;
-            ctx.fillStyle = '#d4af37';
+            ctx.fillStyle = `rgba(212, 175, 55, ${textAlpha})`;
             ctx.beginPath();
             ctx.arc(cx, dotY, 3, 0, Math.PI * 2);
             ctx.fill();
@@ -206,22 +223,89 @@ const CinematicIntro = ({ onComplete }) => {
             if (!startTime) startTime = time;
             const elapsed = time - startTime;
             const cx = canvas.width / 2;
-            const cy = canvas.height / 2 - 50; // Shifted up slightly for visual balance
+            const cy = canvas.height / 2 - 50; 
 
+            // Clear frame
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#05020a'; // Deep black
+            ctx.fillStyle = '#05020a'; // Deep black base
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            if (!isPoppingRef.current) {
-                // Stable Idle State
-                drawEye(cx, cy, elapsed);
-                drawTypographyAndScroll(cx, cy, elapsed);
-            } else {
-                // Popping State
-                // Optional: draw fading typography
-                drawParticles();
+            // --- Intro Animation Phases ---
+            let spotX = cx, spotY = cy;
+            let spotRadius = 150;
+            let eyeOpenFactor = 0;
+            let textAlpha = 0;
+
+            if (isPoppingRef.current) {
+                // Instantly open if popped early
+                eyeOpenFactor = 1;
+                textAlpha = 1;
+                spotRadius = canvas.width * 2;
+            } else if (elapsed < 3000) {
+                // Phase 0: Spotlight Searching
+                const randomX = cx + Math.sin(elapsed * 0.003) * (canvas.width * 0.3) * Math.cos(elapsed * 0.0011);
+                const randomY = cy + Math.cos(elapsed * 0.0025) * (canvas.height * 0.3) * Math.sin(elapsed * 0.0008);
                 
-                // Fade out whole canvas container opacity is handled via state/styles
+                // Pull spotlight to eye center in the 3rd second
+                const pullFactor = Math.max(0, (elapsed - 2000) / 1000);
+                const easePull = pullFactor * pullFactor * pullFactor; 
+                
+                spotX = randomX * (1 - easePull) + cx * easePull;
+                spotY = randomY * (1 - easePull) + cy * easePull;
+                
+                eyeOpenFactor = 0; // Eye is perfectly hidden
+                spotRadius = 130 + Math.sin(elapsed * 0.015) * 14; 
+                textAlpha = 0;
+            } else if (elapsed < 4200) {
+                // Phase 1: Found & Blinking Open
+                const openProgress = (elapsed - 3000) / 1200;
+                eyeOpenFactor = 1 - Math.pow(1 - openProgress, 4); 
+                
+                spotX = cx;
+                spotY = cy;
+                spotRadius = 130 + openProgress * canvas.width * 1.5; 
+                textAlpha = 0;
+            } else {
+                // Phase 2: Stable, waiting for scroll
+                eyeOpenFactor = 1;
+                spotX = cx;
+                spotY = cy;
+                spotRadius = canvas.width * 2; // Completely visible
+                textAlpha = Math.min(1, (elapsed - 4200) / 1000);
+            }
+
+            // Draw Core Elements (Eye draws exactly over the background)
+            if (!isPoppingRef.current) {
+                drawEye(cx, cy, elapsed, eyeOpenFactor);
+                drawTypographyAndScroll(cx, cy, elapsed, textAlpha);
+            } else {
+                drawParticles();
+            }
+
+            // Yellowish Spotlight Beam overlay (illuminates everything)
+            if (spotRadius < canvas.width * 1.5 && !isPoppingRef.current) {
+                ctx.save();
+                ctx.globalCompositeOperation = 'screen'; 
+                const beamGrad = ctx.createRadialGradient(spotX, spotY, 0, spotX, spotY, Math.max(1, spotRadius));
+                beamGrad.addColorStop(0, 'rgba(212, 175, 55, 0.4)'); // Rich yellow glow core
+                beamGrad.addColorStop(1, 'rgba(212, 175, 55, 0)');
+                ctx.fillStyle = beamGrad;
+                ctx.beginPath();
+                ctx.arc(spotX, spotY, Math.max(1, spotRadius), 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+
+            // Spotlight Darkness Mask Overlay (Hides unilluminated regions)
+            if (spotRadius < canvas.width * 1.5 && !isPoppingRef.current) {
+                const maskGrad = ctx.createRadialGradient(spotX, spotY, spotRadius * 0.2, spotX, spotY, spotRadius);
+                maskGrad.addColorStop(0, 'rgba(5, 2, 10, 0)'); // Clear at center of light
+                maskGrad.addColorStop(1, 'rgba(5, 2, 10, 1)'); // Pitch black outside light
+
+                ctx.fillStyle = maskGrad;
+                ctx.beginPath();
+                ctx.rect(0, 0, canvas.width, canvas.height); // Cover screen
+                ctx.fill();
             }
             
             animationFrameId = requestAnimationFrame(render);
