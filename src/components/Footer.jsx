@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 function Footer() {
     const scrollToTop = () => {
         window.scrollTo({ top: 0, behavior: "smooth" });
@@ -7,40 +9,42 @@ function Footer() {
         <footer>
             {/* Back to Top */}
             <div className="footer-top" onClick={scrollToTop}>
-                <span>Back to top</span>
+                <span>Back to top ↑</span>
             </div>
 
             {/* Footer Columns */}
             <div className="footer-main">
                 <div className="footer-columns">
                     <div className="footer-column">
-                        <h4>Get to Know Us</h4>
-                        <a href="#">About HOV Shop</a>
-                        <a href="#">Careers</a>
-                        <a href="#">Press Releases</a>
-                        <a href="#">HOV Science</a>
+                        <h4>House of Visuals</h4>
+                        <Link to="/">Agency Home</Link>
+                        <Link to="/shop">Shop</Link>
+                        <a href="/#who-we-are">About Us</a>
+                        <a href="/#why-us">Why Us</a>
                     </div>
 
                     <div className="footer-column">
-                        <h4>Connect with Us</h4>
-                        <a href="#">Facebook</a>
-                        <a href="#">Twitter</a>
+                        <h4>Services</h4>
+                        <a href="/#who-we-are">Creative Insight</a>
+                        <a href="/#who-we-are">Digital Attention</a>
+                        <a href="/#who-we-are">Performance Marketing</a>
+                        <a href="/#who-we-are">Brand Strategy</a>
+                    </div>
+
+                    <div className="footer-column">
+                        <h4>Connect</h4>
                         <a href="#">Instagram</a>
+                        <a href="#">LinkedIn</a>
+                        <a href="#">Behance</a>
+                        <a href="#">Dribbble</a>
                     </div>
 
                     <div className="footer-column">
-                        <h4>Make Money with Us</h4>
-                        <a href="#">Sell on HOV Shop</a>
-                        <a href="#">Become an Affiliate</a>
-                        <a href="#">Advertise Your Products</a>
-                    </div>
-
-                    <div className="footer-column">
-                        <h4>Let Us Help You</h4>
-                        <a href="#">Your Account</a>
-                        <a href="#">Returns Centre</a>
-                        <a href="#">Customer Service</a>
-                        <a href="#">Help</a>
+                        <h4>Support</h4>
+                        <Link to="/profile">Your Account</Link>
+                        <Link to="/cart">Your Cart</Link>
+                        <a href="#">Shipping Info</a>
+                        <a href="#">Contact Us</a>
                     </div>
                 </div>
             </div>
@@ -49,10 +53,10 @@ function Footer() {
             <div className="footer-bottom">
                 <div className="footer-bottom-content">
                     <span className="footer-logo">
-                        <span className="footer-logo-icon">▲ </span>HOV Shop
+                        ◈ House of Visuals
                     </span>
                     <span className="footer-copyright">
-                        © 2026 HOV Shop. All rights reserved.
+                        © 2026 House of Visuals. The Vision Is Clear.
                     </span>
                 </div>
             </div>

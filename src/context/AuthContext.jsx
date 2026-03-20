@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect, useContext } from "react";
+import API from "../api";
 
 const AuthContext = createContext();
 
@@ -30,7 +31,8 @@ export const AuthProvider = ({ children }) => {
 
     const syncGoogleAuth = async (googleData) => {
         try {
-            const response = await fetch("https://shop-backend-yvk4.onrender.com/api/auth/google", {
+            const response = await fetch(API.defaults.baseURL + "/api/auth/google", {
+
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

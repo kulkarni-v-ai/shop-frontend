@@ -1,0 +1,288 @@
+/* src/pages/Admin.css */
+.admin-layout {
+    display: flex;
+    min-height: 100vh;
+    background-color: #030303;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+}
+
+.admin-sidebar {
+    width: 260px;
+    background-color: #0a0a0a;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+    padding: 32px 0;
+}
+
+.admin-brand {
+    padding: 0 32px 32px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.admin-brand h2 {
+    font-size: 1rem;
+    letter-spacing: 0.2em;
+    font-weight: 600;
+    color: #D4AF37;
+    margin: 0;
+}
+
+.admin-nav {
+    display: flex;
+    flex-direction: column;
+    padding: 24px 16px;
+    flex: 1;
+    gap: 8px;
+}
+
+.admin-nav-link {
+    padding: 12px 16px;
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.admin-nav-link:hover {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+.admin-nav-link.active {
+    color: #D4AF37;
+    background-color: rgba(212, 175, 55, 0.08);
+}
+
+.admin-logout-btn {
+    margin: 0 16px;
+    padding: 12px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.6);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.85rem;
+}
+
+.admin-logout-btn:hover {
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.admin-main {
+    flex: 1;
+    overflow-y: auto;
+    background-image: radial-gradient(circle at top right, rgba(212, 175, 55, 0.03), transparent 40%);
+}
+
+/* Page Editor Styles */
+.admin-page-editor {
+    padding: 48px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.admin-editor-header {
+    margin-bottom: 40px;
+}
+
+.admin-editor-header h2 {
+    font-size: 2rem;
+    font-weight: 300;
+    margin-bottom: 24px;
+    letter-spacing: -0.02em;
+}
+
+.admin-tabs {
+    display: flex;
+    gap: 4px;
+    background: #0a0a0a;
+    padding: 6px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    overflow-x: auto;
+}
+
+.admin-tabs button {
+    padding: 10px 20px;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.admin-tabs button:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.admin-tabs button.active {
+    background: #1a1a1a;
+    color: #D4AF37;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.admin-editor-content {
+    background: #0a0a0a;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 40px;
+}
+
+/* Forms */
+.admin-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.admin-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.admin-form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px;
+}
+
+.admin-form-group label {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.admin-form-group input,
+.admin-form-group textarea,
+.admin-form-group select {
+    background: #141414;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    padding: 14px 16px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+}
+
+.admin-form-group input:focus,
+.admin-form-group textarea:focus {
+    outline: none;
+    border-color: #D4AF37;
+    background: #1a1a1a;
+}
+
+.admin-save-btn {
+    align-self: flex-start;
+    background: #D4AF37;
+    color: #000;
+    border: none;
+    padding: 14px 32px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 16px;
+}
+
+.admin-save-btn:hover {
+    background: #FFF;
+    transform: translateY(-2px);
+}
+
+.admin-toast {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    background: #1a1a1a;
+    border: 1px solid #D4AF37;
+    color: #D4AF37;
+    padding: 16px 24px;
+    border-radius: 8px;
+    font-weight: 500;
+    animation: toastUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 9999;
+}
+
+@keyframes toastUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Arrays / Lists in Editor */
+.admin-list-item {
+    background: #141414;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 24px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: relative;
+    margin-bottom: 16px;
+}
+
+.admin-remove-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: rgba(255, 50, 50, 0.1);
+    color: #ff4444;
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.admin-remove-btn:hover {
+    background: rgba(255, 50, 50, 0.2);
+}
+
+.admin-add-btn {
+    background: transparent;
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.6);
+    padding: 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+}
+
+.admin-add-btn:hover {
+    border-color: #D4AF37;
+    color: #D4AF37;
+    background: rgba(212, 175, 55, 0.05);
+}

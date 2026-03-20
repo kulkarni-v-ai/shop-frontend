@@ -1,34 +1,24 @@
 import { useEffect, useState } from "react";
+import adminApi from "./adminApi";
 
 function AdminOrders() {
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
-    fetch("https://shop-backend-yvk4.onrender.com/api/orders")
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("Orders:", data);
-        setOrders(data);
+    adminApi.get("/api/orders")
+      .then((res) => {
+        console.log("Orders:", res.data);
+        setOrders(res.data);
       })
       .catch((err) => console.log(err));
   }, []);
 
   const updateStatus = async (id, status) => {
     try {
-      await fetch(
-        `https://shop-backend-yvk4.onrender.com/api/orders/${id}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ status }),
-        }
-      );
+      await adminApi.put(`/api/orders/${id}`, { status });
 
-      const res = await fetch(
-        "https://shop-backend-yvk4.onrender.com/api/orders"
-      );
-      const data = await res.json();
-      setOrders(data);
+      const res = await adminApi.get("/api/orders");
+      setOrders(res.data);
     } catch (err) {
       console.log("Update failed:", err);
     }

@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import gsap from "gsap";
 
 function Home({
   selectedCategory,
@@ -12,38 +13,38 @@ function Home({
 }) {
   const navigate = useNavigate();
   const [takingLong, setTakingLong] = useState(false);
+  const containerRef = useRef(null);
+  const heroRef = useRef(null);
 
   useEffect(() => {
     let timer;
     if (loading) {
       timer = setTimeout(() => {
         setTakingLong(true);
-      }, 4000); // 4 seconds
+      }, 4000);
     } else {
       setTakingLong(false);
+      // Animate product cards in smoothly
+      if (containerRef.current) {
+        gsap.fromTo(
+          ".premium-card",
+          { y: 50, opacity: 0 },
+          { y: 0, opacity: 1, duration: 1, stagger: 0.1, ease: "power3.out" }
+        );
+      }
     }
     return () => clearTimeout(timer);
-  }, [loading]);
+  }, [loading, products, selectedCategory, searchQuery]);
 
-  // Generate pseudo-random stars for visual display
-  const getStars = (id) => {
-    const hash = id ? id.charCodeAt(id.length - 1) % 3 : 0;
-    const full = 3 + hash;
-    const half = hash < 2 ? 1 : 0;
-    const empty = 5 - full - half;
-    return "★".repeat(full) + (half ? "½" : "") + "☆".repeat(empty);
-  };
-
-  const getRatingCount = (id) => {
-    if (!id) return 42;
-    const h = id.charCodeAt(0) + id.charCodeAt(id.length - 1);
-    return 50 + (h % 500);
-  };
-
-  const getDiscount = (id) => {
-    if (!id) return 15;
-    return 10 + (id.charCodeAt(id.length - 2 >= 0 ? id.length - 2 : 0) % 40);
-  };
+  useEffect(() => {
+    if (heroRef.current) {
+      gsap.fromTo(
+        heroRef.current.children,
+        { y: 30, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1.2, stagger: 0.2, ease: "power4.out" }
+      );
+    }
+  }, []);
 
   const filteredProducts = products
     .filter((p) =>
@@ -57,40 +58,10 @@ function Home({
 
   if (loading && products.length === 0) {
     return (
-      <div>
-        {/* Hero Banner */}
-        <div className="hero-banner">
-          <div className="hero-content">
-            <div className="hero-badge">Welcome to HOV Shop</div>
-            <h1 className="hero-title">
-              Discover <span>Amazing Deals</span> Every Day
-            </h1>
-            <p className="hero-subtitle">
-              {takingLong
-                ? "Connecting to our secure servers... This might take a few seconds on first load."
-                : "Loading the best products for you..."}
-            </p>
-            {takingLong && (
-              <div className="loading-spinner-container">
-                <div className="loading-spinner"></div>
-                <p className="loading-hint">Waking up server 🚀</p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Skeleton Loading */}
-        <div className="skeleton-grid">
-          {[...Array(8)].map((_, i) => (
-            <div key={i} className="skeleton-card">
-              <div className="skeleton-image"></div>
-              <div className="skeleton-body">
-                <div className="skeleton-line medium"></div>
-                <div className="skeleton-line short"></div>
-                <div className="skeleton-line"></div>
-              </div>
-            </div>
-          ))}
+      <div className="premium-home-container">
+        <div className="premium-hero" style={{ minHeight: '60vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+          <h1 className="hero-title" style={{ color: '#fff' }}>Connecting to <span style={{ color: '#d4af37' }}>Core</span>...</h1>
+          <div style={{ marginTop: '20px', width: '40px', height: '40px', border: '3px solid rgba(212, 175, 55, 0.3)', borderTop: '3px solid #d4af37', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
         </div>
       </div>
     );
@@ -98,122 +69,215 @@ function Home({
 
   if (error) {
     return (
-      <div className="error-container">
-        <div className="error-icon">⚠️</div>
-        <p className="error-message">{error}</p>
-        <p className="error-hint">Please check your connection and try again.</p>
+      <div className="premium-home-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
+        <h2 style={{ color: '#ff4444' }}>System Disturbance: {error}</h2>
       </div>
     );
   }
 
   return (
-    <div>
-      {/* Hero Banner */}
-      <div className="hero-banner">
-        <div className="hero-content">
-          <div className="hero-badge">🔥 Trending Now</div>
-          <h1 className="hero-title">
-            Shop the Best <span>Deals</span> Today
-          </h1>
-          <p className="hero-subtitle">
-            Explore thousands of products at unbeatable prices. Free delivery on
-            orders above ₹499.
-          </p>
-          <a href="#products" className="hero-cta">
-            Shop Now →
-          </a>
-        </div>
+    <div className="premium-home-container" ref={containerRef}>
+      <style>{`
+        /* Embedded Premium Styling to override Amazon-like styles */
+        body {
+          background-color: #05020a;
+          color: #ffffff;
+          font-family: 'Inter', sans-serif;
+        }
+        .premium-home-container {
+          width: 100%;
+          min-height: 100vh;
+          background: radial-gradient(circle at 50% 0%, #1a0b2e 0%, #05020a 60%);
+          padding: 0 5%;
+          padding-bottom: 100px;
+        }
+        .premium-hero {
+          padding: 15vh 0 10vh 0;
+          text-align: center;
+          position: relative;
+        }
+        .premium-hero-badge {
+          display: inline-block;
+          padding: 6px 16px;
+          border-radius: 30px;
+          border: 1px solid rgba(212, 175, 55, 0.3);
+          color: #d4af37;
+          font-size: 0.8rem;
+          letter-spacing: 2px;
+          text-transform: uppercase;
+          margin-bottom: 24px;
+          background: rgba(212, 175, 55, 0.05);
+          backdrop-filter: blur(10px);
+        }
+        .premium-hero h1 {
+          font-size: clamp(3rem, 6vw, 6rem);
+          font-weight: 300;
+          letter-spacing: -2px;
+          line-height: 1.1;
+          margin-bottom: 24px;
+        }
+        .premium-hero h1 span {
+          color: #d4af37;
+          font-style: italic;
+          font-weight: 400;
+        }
+        .premium-hero p {
+          font-size: 1.2rem;
+          color: rgba(255, 255, 255, 0.6);
+          max-width: 600px;
+          margin: 0 auto;
+          line-height: 1.6;
+        }
+        .premium-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+          gap: 40px;
+          max-width: 1400px;
+          margin: 0 auto;
+        }
+        .premium-card {
+          background: rgba(255, 255, 255, 0.02);
+          border: 1px solid rgba(255, 255, 255, 0.05);
+          border-radius: 16px;
+          overflow: hidden;
+          transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+          backdrop-filter: blur(20px);
+          display: flex;
+          flex-direction: column;
+          position: relative;
+          cursor: pointer;
+        }
+        .premium-card:hover {
+          transform: translateY(-10px);
+          border-color: rgba(212, 175, 55, 0.3);
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 40px rgba(147, 51, 234, 0.1);
+        }
+        .premium-card-image-wrap {
+          width: 100%;
+          padding-top: 100%; /* 1:1 Aspect Ratio */
+          position: relative;
+          overflow: hidden;
+          background: rgba(0,0,0,0.3);
+        }
+        .premium-card-image {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .premium-card:hover .premium-card-image {
+          transform: scale(1.05);
+        }
+        .premium-card-body {
+          padding: 24px;
+          display: flex;
+          flex-direction: column;
+          flex-grow: 1;
+        }
+        .premium-category {
+          font-size: 0.75rem;
+          color: #9333ea;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          margin-bottom: 8px;
+        }
+        .premium-title {
+          font-size: 1.4rem;
+          font-weight: 400;
+          margin: 0 0 16px;
+          color: #ffffff;
+        }
+        .premium-footer {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-top: auto;
+        }
+        .premium-price {
+          font-size: 1.2rem;
+          color: #d4af37;
+          font-weight: 300;
+        }
+        .premium-btn {
+          background: transparent;
+          color: #fff;
+          border: 1px solid rgba(255,255,255,0.2);
+          padding: 8px 16px;
+          border-radius: 30px;
+          font-size: 0.85rem;
+          letter-spacing: 1px;
+          text-transform: uppercase;
+          transition: all 0.3s ease;
+          cursor: pointer;
+        }
+        .premium-btn:hover {
+          background: #d4af37;
+          border-color: #d4af37;
+          color: #000;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+      `}</style>
+
+      {/* Cinematic Hero */}
+      <div className="premium-hero" ref={heroRef}>
+        <div className="premium-hero-badge">✦ The Vault</div>
+        <h1>
+          Curated <span>Artifacts</span>
+        </h1>
+        <p>
+          Step into our exclusive collection. Precision-crafted merchandise, stickers, and physical extensions of the House of Visuals universe.
+        </p>
       </div>
 
-      {/* Products Section */}
-      <div id="products">
-        <div className="section-header">
-          <h2 className="section-title">
-            {selectedCategory === "All" ? "All Products" : selectedCategory}
-          </h2>
-          <span className="section-count">
-            {filteredProducts.length} result{filteredProducts.length !== 1 ? "s" : ""}
-          </span>
+      {/* Grid */}
+      {filteredProducts.length === 0 ? (
+        <div style={{ textAlign: 'center', marginTop: '10vh', color: 'rgba(255,255,255,0.5)' }}>
+          <p>No artifacts align with your query.</p>
         </div>
-
-        {filteredProducts.length === 0 ? (
-          <div className="error-container">
-            <div className="error-icon">🔍</div>
-            <p className="error-message">No products found</p>
-            <p className="error-hint">Try adjusting your filters or search query.</p>
-          </div>
-        ) : (
-          <div className="products-grid">
-            {filteredProducts.map((p) => {
-              const discount = getDiscount(p._id);
-              const originalPrice = Math.round(p.price / (1 - discount / 100));
-              return (
-                <div
-                  key={p._id}
-                  className="product-card"
-                  onClick={() => navigate(`/product/${p._id}`)}
-                >
-                  {/* Image */}
-                  <div className="product-card-image-wrapper">
-                    {discount >= 30 && (
-                      <span className="product-card-badge">
-                        {discount}% OFF
-                      </span>
-                    )}
-                    <img
-                      src={p.image}
-                      alt={p.name}
-                      className="product-card-image"
-                      loading="lazy"
-                    />
+      ) : (
+        <div className="premium-grid">
+          {filteredProducts.map((p) => (
+            <div
+              key={p._id}
+              className="premium-card"
+              onClick={() => navigate(`/product/${p._id}`)}
+            >
+              <div className="premium-card-image-wrap">
+                <img
+                  src={p.image}
+                  alt={p.name}
+                  className="premium-card-image"
+                  loading="lazy"
+                />
+              </div>
+              <div className="premium-card-body">
+                {p.category && (
+                  <span className="premium-category">{p.category}</span>
+                )}
+                <h3 className="premium-title">{p.name}</h3>
+                
+                <div className="premium-footer">
+                  <div className="premium-price">
+                    ₹{p.price.toLocaleString()}
                   </div>
-
-                  {/* Card Body */}
-                  <div className="product-card-body">
-                    {p.category && (
-                      <span className="product-card-category">{p.category}</span>
-                    )}
-
-                    <h3 className="product-card-title">{p.name}</h3>
-
-                    <div className="product-card-rating">
-                      <span className="stars">{getStars(p._id)}</span>
-                      <span className="rating-count">
-                        {getRatingCount(p._id).toLocaleString()}
-                      </span>
-                    </div>
-
-                    <div className="product-card-price">
-                      <span className="price-symbol">₹</span>
-                      <span className="price-current">
-                        {p.price.toLocaleString()}
-                      </span>
-                      <span className="price-original">
-                        ₹{originalPrice.toLocaleString()}
-                      </span>
-                      <span className="price-discount">({discount}% off)</span>
-                    </div>
-
-                    <span className="product-card-stock">In stock</span>
-
-                    <div className="product-card-actions">
-                      <button
-                        className="btn-add-cart"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          addToCart(p);
-                        }}
-                      >
-                        Add to Cart
-                      </button>
-                    </div>
-                  </div>
+                  <button
+                    className="premium-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      addToCart(p);
+                    }}
+                  >
+                    Collect
+                  </button>
                 </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

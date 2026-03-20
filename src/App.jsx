@@ -1,18 +1,24 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { useEffect, useState, lazy, Suspense } from "react";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import Home from "./pages/Home";
-import Cart from "./pages/Cart";
-import Checkout from "./pages/Checkout";
-import ProductDetails from "./pages/ProductDetails";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import Profile from "./pages/Profile";
+import LandingPage from "./pages/LandingPage";
 import { AuthProvider } from "./context/AuthContext";
+import { CMSProvider } from "./context/CMSContext";
+import { AdminAuthProvider } from "./context/AdminAuthContext";
+import { InlineEditProvider } from "./context/InlineEditContext";
 import { getProducts } from "./api";
 import "./App.css";
+
+const Home = lazy(() => import("./pages/Home"));
+const Cart = lazy(() => import("./pages/Cart"));
+const Checkout = lazy(() => import("./pages/Checkout"));
+const ProductDetails = lazy(() => import("./pages/ProductDetails"));
+const Login = lazy(() => import("./pages/Login"));
+const Signup = lazy(() => import("./pages/Signup"));
+const Profile = lazy(() => import("./pages/Profile"));
+const AdminLayout = lazy(() => import("./pages/AdminLayout"));
 
 // TODO: Replace with your actual Google Client ID
 const GOOGLE_CLIENT_ID = "382931076466-m0ue6cavrk7g5su9b1k4o1dvtukqvjp0.apps.googleusercontent.com";
@@ -137,80 +143,137 @@ function App() {
   return (
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
       <AuthProvider>
-        <Router>
-          <Navbar
-            totalItems={totalItems}
-            selectedCategory={selectedCategory}
-            setSelectedCategory={setSelectedCategory}
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-          />
-
-          <main className="main-content">
-            <Routes>
-              <Route
-                path="/"
-                element={
-                  <Home
-                    selectedCategory={selectedCategory}
-                    setSelectedCategory={setSelectedCategory}
-                    products={products}
-                    loading={loading}
-                    error={error}
-                    addToCart={addToCart}
-                    searchQuery={searchQuery}
-                  />
-                }
-              />
-
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/profile" element={<Profile showToast={showToast} />} />
-
-              <Route
-                path="/cart"
-                element={
-                  <Cart
-                    cart={cart}
-                    total={total}
-                    totalItems={totalItems}
-                    increaseQty={increaseQty}
-                    decreaseQty={decreaseQty}
-                    removeItem={removeItem}
-                  />
-                }
-              />
-
-              <Route
-                path="/checkout"
-                element={
-                  <Checkout
-                    cart={cart}
-                    total={total}
-                    checkout={checkout}
-                  />
-                }
-              />
-
-              <Route
-                path="/product/:id"
-                element={
-                  <ProductDetails
-                    products={products}
-                    addToCart={addToCart}
-                  />
-                }
-              />
-            </Routes>
-          </main>
-
-          <Footer />
-
-          {/* Toast Notification */}
-          {toast && <div className="toast">{toast}</div>}
-        </Router>
+        <CMSProvider>
+          <AdminAuthProvider>
+            <InlineEditProvider>
+              <Router>
+                <AppShell
+                  totalItems={totalItems}
+                  selectedCategory={selectedCategory}
+                  setSelectedCategory={setSelectedCategory}
+                  searchQuery={searchQuery}
+                  setSearchQuery={setSearchQuery}
+                  cart={cart}
+                  total={total}
+                  products={products}
+                  loading={loading}
+                  error={error}
+                  addToCart={addToCart}
+                  increaseQty={increaseQty}
+                  decreaseQty={decreaseQty}
+                  removeItem={removeItem}
+                  checkout={checkout}
+                  showToast={showToast}
+                  toast={toast}
+                />
+              </Router>
+            </InlineEditProvider>
+          </AdminAuthProvider>
+        </CMSProvider>
       </AuthProvider>
     </GoogleOAuthProvider>
+  );
+}
+
+function AppShell({
+  totalItems, selectedCategory, setSelectedCategory,
+  searchQuery, setSearchQuery, cart, total, products,
+  loading, error, addToCart, increaseQty, decreaseQty,
+  removeItem, checkout, showToast, toast
+}) {
+  const location = useLocation();
+  const isLanding = location.pathname === '/';
+  const isAdmin = location.pathname.startsWith('/admin');
+
+  return (
+    <>
+      {!isLanding && !isAdmin && (
+        <Navbar
+          totalItems={totalItems}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+        />
+      )}
+
+      <main className={isLanding || isAdmin ? '' : 'main-content'}>
+        <Suspense fallback={
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+            <div className="loading-spinner" />
+          </div>
+        }>
+          <Routes>
+            {/* Admin Dashboard Routes */}
+            <Route path="/admin/*" element={<AdminLayout />} />
+
+            <Route
+              path="/"
+              element={<LandingPage />}
+            />
+
+            <Route
+              path="/shop"
+              element={
+                <Home
+                  selectedCategory={selectedCategory}
+                  setSelectedCategory={setSelectedCategory}
+                  products={products}
+                  loading={loading}
+                  error={error}
+                  addToCart={addToCart}
+                  searchQuery={searchQuery}
+                />
+              }
+            />
+
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/profile" element={<Profile showToast={showToast} />} />
+
+            <Route
+              path="/cart"
+              element={
+                <Cart
+                  cart={cart}
+                  total={total}
+                  totalItems={totalItems}
+                  increaseQty={increaseQty}
+                  decreaseQty={decreaseQty}
+                  removeItem={removeItem}
+                />
+              }
+            />
+
+            <Route
+              path="/checkout"
+              element={
+                <Checkout
+                  cart={cart}
+                  total={total}
+                  checkout={checkout}
+                />
+              }
+            />
+
+            <Route
+              path="/product/:id"
+              element={
+                <ProductDetails
+                  products={products}
+                  addToCart={addToCart}
+                />
+              }
+            />
+          </Routes>
+        </Suspense>
+      </main>
+
+      {!isLanding && !isAdmin && <Footer />}
+
+      {/* Toast Notification */}
+      {toast && <div className="toast">{toast}</div>}
+    </>
   );
 }
 

@@ -1,46 +1,55 @@
 import { useState } from "react";
+import { useAdminAuth } from "./context/AdminAuthContext";
 
 function AdminLogin({ onLogin }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const { login } = useAdminAuth();
 
-  const login = async () => {
+  const handleLogin = async () => {
+    if (!username.trim() || !password.trim()) {
+      setError("Please enter both username and password.");
+      return;
+    }
+
     setLoading(true);
+    setError("");
+
     try {
-      const res = await fetch(
-        "https://shop-backend-yvk4.onrender.com/api/admin/login",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, password }),
-        }
-      );
-
-      const data = await res.json();
-
-      if (res.ok) {
-        localStorage.setItem("admin", JSON.stringify(data.admin));
-        localStorage.setItem("adminToken", data.token);
-        onLogin();
-      } else {
-        alert(data.message);
-      }
-    } catch {
-      alert("Login failed. Please try again.");
+      await login(username, password);
+      onLogin();
+    } catch (err) {
+      const message = err.response?.data?.message || "Login failed. Please try again.";
+      setError(message);
     } finally {
       setLoading(false);
     }
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === "Enter") login();
+    if (e.key === "Enter") handleLogin();
   };
 
   return (
     <div className="admin-login-page">
       <div className="admin-login-card">
         <h2 className="admin-login-title">Admin Sign In</h2>
+
+        {error && (
+          <div style={{
+            padding: '10px 16px',
+            background: 'rgba(220,38,38,0.1)',
+            border: '1px solid rgba(220,38,38,0.25)',
+            borderRadius: '8px',
+            color: '#f87171',
+            fontSize: '0.85rem',
+            marginBottom: '16px',
+          }}>
+            {error}
+          </div>
+        )}
 
         <div className="admin-input-group">
           <label htmlFor="admin-username">Username</label>
@@ -52,6 +61,7 @@ function AdminLogin({ onLogin }) {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             onKeyDown={handleKeyDown}
+            autoComplete="username"
           />
         </div>
 
@@ -65,10 +75,11 @@ function AdminLogin({ onLogin }) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             onKeyDown={handleKeyDown}
+            autoComplete="current-password"
           />
         </div>
 
-        <button className="btn-admin-login" onClick={login} disabled={loading}>
+        <button className="btn-admin-login" onClick={handleLogin} disabled={loading} style={{ marginTop: '16px' }}>
           {loading ? "Signing in..." : "Sign In"}
         </button>
       </div>

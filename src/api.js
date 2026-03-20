@@ -7,3 +7,5 @@ const API = axios.create({
 export const getProducts = () => API.get("/api/products");
 export const addProduct = (data) => API.post("/api/products", data);
 export const deleteProduct = (id) => API.delete(`/api/products/${id}`);
+
+export default API;

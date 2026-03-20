@@ -16,7 +16,7 @@ function Checkout({ cart, total, checkout }) {
         <div className="cart-empty-icon">📦</div>
         <h3>Nothing to checkout</h3>
         <p>Your cart is empty. Add some products first.</p>
-        <Link to="/" className="btn-continue-shopping">
+        <Link to="/shop" className="btn-continue-shopping">
           Continue Shopping
         </Link>
       </div>
@@ -79,7 +79,7 @@ function Checkout({ cart, total, checkout }) {
         </div>
 
         <Link
-          to="/"
+          to="/shop"
           style={{
             display: "block",
             textAlign: "center",

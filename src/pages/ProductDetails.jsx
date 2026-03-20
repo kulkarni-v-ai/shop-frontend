@@ -9,9 +9,8 @@ function ProductDetails({ products, addToCart }) {
 
   useEffect(() => {
     if (id) {
-      // Fire-and-forget view increment
       fetch(`https://shop-backend-yvk4.onrender.com/api/products/${id}/view`, { method: "POST" })
-        .catch(() => { }); // Fail silently
+        .catch(() => { });
     }
   }, [id]);
 
@@ -23,17 +22,6 @@ function ProductDetails({ products, addToCart }) {
       </div>
     );
   }
-
-  // Generate pseudo-random values for display
-  const hash = id ? id.charCodeAt(id.length - 1) % 3 : 0;
-  const fullStars = 3 + hash;
-  const halfStar = hash < 2 ? 1 : 0;
-  const emptyStars = 5 - fullStars - halfStar;
-  const stars = "★".repeat(fullStars) + (halfStar ? "½" : "") + "☆".repeat(emptyStars);
-
-  const ratingCount = 50 + ((id.charCodeAt(0) + id.charCodeAt(id.length - 1)) % 500);
-  const discount = 10 + (id.charCodeAt(id.length - 2 >= 0 ? id.length - 2 : 0) % 40);
-  const originalPrice = Math.round(product.price / (1 - discount / 100));
 
   const handleAddToCart = () => {
     addToCart(product);
@@ -48,15 +36,15 @@ function ProductDetails({ products, addToCart }) {
     <div>
       {/* Breadcrumb */}
       <div className="pdp-breadcrumb">
-        <Link to="/">Home</Link>
-        <span>›</span>
+        <Link to="/shop">Shop</Link>
+        <span style={{ color: 'var(--color-accent)' }}>›</span>
         {product.category && (
           <>
             <span>{product.category}</span>
-            <span>›</span>
+            <span style={{ color: 'var(--color-accent)' }}>›</span>
           </>
         )}
-        <span>{product.name}</span>
+        <span style={{ color: 'var(--color-text-secondary)' }}>{product.name}</span>
       </div>
 
       {/* Product Detail Container */}
@@ -72,26 +60,27 @@ function ProductDetails({ products, addToCart }) {
 
         {/* Info Section */}
         <div className="pdp-info">
+          {product.category && (
+            <span style={{ 
+              color: 'var(--color-accent)', 
+              fontSize: '0.75rem', 
+              textTransform: 'uppercase', 
+              letterSpacing: '0.15em', 
+              fontWeight: 600,
+              marginBottom: '12px'
+            }}>
+              {product.category}
+            </span>
+          )}
+          
           <h1 className="pdp-title">{product.name}</h1>
 
-          <div className="pdp-rating">
-            <span className="stars">{stars}</span>
-            <span className="rating-count">
-              {ratingCount.toLocaleString()} ratings
-            </span>
-          </div>
-
           <div className="pdp-price-section">
-            <div className="pdp-price-label">Deal Price</div>
             <div className="pdp-price">
               <span className="price-symbol">₹</span>
               <span className="price-current">
                 {product.price.toLocaleString()}
               </span>
-              <span className="price-original">
-                M.R.P.: ₹{originalPrice.toLocaleString()}
-              </span>
-              <span className="price-discount">({discount}% off)</span>
             </div>
           </div>
 

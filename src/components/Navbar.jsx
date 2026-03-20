@@ -1,24 +1,41 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 function Navbar({ totalItems, selectedCategory, setSelectedCategory, searchQuery, setSearchQuery }) {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const categories = ["All", "Posters", "Stickers", "Artifacts"];
 
   return (
     <nav className="navbar">
       {/* Main Navigation Bar */}
       <div className="navbar-main">
-        <Link to="/" className="navbar-logo">
-          <span className="navbar-logo-icon">▲</span>
-          HOV Shop
+        {/* Logo */}
+        <Link to="/" className="navbar-logo" style={{ border: 'none' }}>
+          <span className="eye-mark" style={{ width: '18px', height: '10px', border: '1.5px solid #fff', borderRadius: '100% 0', transform: 'rotate(45deg)', position: 'relative', display: 'inline-block' }}></span>
+          HOV
+        </Link>
+
+        {/* Shop Label */}
+        <Link to="/shop" style={{ 
+          color: '#d4af37', 
+          fontSize: '0.75rem', 
+          fontWeight: 700, 
+          textTransform: 'uppercase', 
+          letterSpacing: '0.15em',
+          textDecoration: 'none',
+          padding: '6px 16px',
+          border: '1px solid rgba(212,175,55,0.3)',
+          borderRadius: '4px'
+        }}>
+          Shop
         </Link>
 
         {/* Search Bar */}
         <div className="navbar-search">
           <input
             type="text"
-            placeholder="Search products, brands, and more..."
+            placeholder="Search products..."
             value={searchQuery || ""}
             onChange={(e) => setSearchQuery && setSearchQuery(e.target.value)}
           />
@@ -30,7 +47,7 @@ function Navbar({ totalItems, selectedCategory, setSelectedCategory, searchQuery
         {/* Right Actions */}
         <div className="navbar-actions">
           {user ? (
-            <div style={{ display: "flex", gap: "var(--space-md)", alignItems: "center" }}>
+            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
               <Link to="/profile" className="navbar-link">
                 <span className="navbar-link-small">Hello, {user.name}</span>
                 <span className="navbar-link-bold">My Account</span>

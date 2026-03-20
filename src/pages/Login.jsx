@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import { useAuth } from "../context/AuthContext";
+import API from "../api";
 
 const Login = () => {
     const [email, setEmail] = useState("");
@@ -18,7 +19,7 @@ const Login = () => {
         setError("");
 
         try {
-            const response = await fetch("https://shop-backend-yvk4.onrender.com/api/auth/login", {
+            const response = await fetch(API.defaults.baseURL + "/api/auth/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -30,7 +31,7 @@ const Login = () => {
 
             if (response.ok) {
                 login(data, data.token);
-                navigate("/");
+                navigate("/shop");
             } else {
                 setError(data.message || "Invalid credentials");
             }

@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import { useAuth } from "../context/AuthContext";
+import API from "../api";
 
 const Signup = () => {
     const [name, setName] = useState("");
@@ -19,7 +20,7 @@ const Signup = () => {
         setError("");
 
         try {
-            const response = await fetch("https://shop-backend-yvk4.onrender.com/api/auth/register", {
+            const response = await fetch(API.defaults.baseURL + "/api/auth/register", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -31,7 +32,7 @@ const Signup = () => {
 
             if (response.ok) {
                 login(data, data.token);
-                navigate("/");
+                navigate("/shop");
             } else {
                 setError(data.message || "Registration failed");
             }

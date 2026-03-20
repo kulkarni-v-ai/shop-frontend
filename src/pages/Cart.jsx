@@ -14,7 +14,7 @@ function Cart({
         <div className="cart-empty-icon">🛒</div>
         <h3>Your Cart is Empty</h3>
         <p>Looks like you haven't added anything to your cart yet.</p>
-        <Link to="/" className="btn-continue-shopping">
+        <Link to="/shop" className="btn-continue-shopping">
           Continue Shopping
         </Link>
       </div>
