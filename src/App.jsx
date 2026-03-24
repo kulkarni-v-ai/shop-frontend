@@ -40,17 +40,22 @@ function App() {
   const [toast, setToast] = useState(null);
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchProducts = async (retries = 3) => {
       try {
         const { data } = await getProducts();
         setProducts(data);
         localStorage.setItem("cached_products", JSON.stringify(data));
         setLoading(false);
       } catch (err) {
-        if (products.length === 0) {
-          setError("Failed to load products");
+        if (retries > 0) {
+          // Wait 2 seconds before retrying to allow the backend to wake up
+          setTimeout(() => fetchProducts(retries - 1), 2000);
+        } else {
+          if (products.length === 0) {
+            setError("Failed to load products. Backend might be asleep, please try again.");
+          }
+          setLoading(false);
         }
-        setLoading(false);
       }
     };
 
