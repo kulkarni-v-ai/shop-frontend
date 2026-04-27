@@ -247,7 +247,7 @@ function Home({
             >
               <div className="premium-card-image-wrap">
                 <img
-                  src={p.image}
+                  src={(p.images && p.images.length > 0) ? p.images[0] : p.image}
                   alt={p.name}
                   className="premium-card-image"
                   loading="lazy"

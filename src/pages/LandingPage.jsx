@@ -434,6 +434,44 @@ const LandingPage = () => {
                 </section>
             </EditableSection>
 
+            {/* Instagram Showcase — Redirectable Video Link */}
+            <section className="agency-instagram" id="instagram-showcase">
+                <div className="instagram-inner">
+                    <div className="reveal" ref={addToRefs}>
+                        <span className="section-tag">Follow Us</span>
+                        <h2 className="section-title-agency">Behind The<br /> Scenes.</h2>
+                    </div>
+                    <div className="instagram-video-grid">
+                        <a
+                            href="https://www.instagram.com/houseofvisuals.in/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="instagram-video-card reveal"
+                            ref={addToRefs}
+                        >
+                            <div className="instagram-video-card__play">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <polygon points="5 3 19 12 5 21 5 3" fill="currentColor" stroke="none" />
+                                </svg>
+                            </div>
+                            <div className="instagram-video-card__overlay">
+                                <div className="instagram-video-card__label">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                                        <circle cx="12" cy="12" r="5"/>
+                                        <circle cx="17.5" cy="6.5" r="1.5"/>
+                                    </svg>
+                                    <span>@houseofvisuals.in</span>
+                                </div>
+                                <span className="instagram-video-card__cta">Watch Our Reels →</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <div className="section-transition" />
+
             {/* Shop Promo */}
             {/* Shop Internet Culture */}
             <EditableSection sectionKey="shop">
@@ -461,7 +499,7 @@ const LandingPage = () => {
                                                     onClick={() => navigate(`/product/${p._id}`)}
                                                 >
                                                     <div className="shop-product-card__img">
-                                                        <img src={p.image} alt={p.name} loading="lazy" />
+                                                        <img src={(p.images && p.images.length > 0) ? p.images[0] : p.image} alt={p.name} loading="lazy" />
                                                     </div>
                                                     <div className="shop-product-card__info">
                                                         {p.category && <span className="shop-product-card__cat">{p.category}</span>}
