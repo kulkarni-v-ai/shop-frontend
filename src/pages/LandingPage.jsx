@@ -16,7 +16,7 @@ const LandingPage = () => {
     const heroRef = useRef(null);
     const glowRef = useRef(null);
     const spotlightRef = useRef(null);
-    const brandEyeRef = useRef(null);
+    const spotlightRef = useRef(null);
     const [introComplete, setIntroComplete] = useState(() => {
         return sessionStorage.getItem('hovIntroPlayed') === 'true';
     });
@@ -53,24 +53,6 @@ const LandingPage = () => {
             if (spotlightRef.current) {
                 spotlightRef.current.style.transform = `translate(${spotX - 200}px, ${spotY - 200}px)`;
             }
-            // Brand eye pupil tracking
-            if (brandEyeRef.current) {
-                const eyeEl = brandEyeRef.current.closest('.brand-eye');
-                if (eyeEl) {
-                    const rect = eyeEl.getBoundingClientRect();
-                    const centerX = rect.left + rect.width / 2;
-                    const centerY = rect.top + rect.height / 2;
-                    const dx = mouseX - centerX;
-                    const dy = mouseY - centerY;
-                    const angle = Math.atan2(dy, dx);
-                    const dist = Math.min(Math.hypot(dx, dy) * 0.02, 6);
-                    const targetX = Math.cos(angle) * dist;
-                    const targetY = Math.sin(angle) * dist;
-                    pupilX = lerp(pupilX, targetX, 0.05);
-                    pupilY = lerp(pupilY, targetY, 0.05);
-                    brandEyeRef.current.style.transform = `translate(${pupilX}px, ${pupilY}px)`;
-                }
-            }
             rafId = requestAnimationFrame(animateSpotlight);
         };
         rafId = requestAnimationFrame(animateSpotlight);
@@ -101,18 +83,9 @@ const LandingPage = () => {
             });
         };
         window.addEventListener('mousemove', handleMouseMove);
-        // Periodic blink
-        const blinkInterval = setInterval(() => {
-            const eye = document.querySelector('.brand-eye');
-            if (eye) {
-                eye.classList.add('blink');
-                setTimeout(() => eye.classList.remove('blink'), 200);
-            }
-        }, 4000);
         return () => {
             window.removeEventListener('mousemove', handleMouseMove);
             cancelAnimationFrame(rafId);
-            clearInterval(blinkInterval);
         };
     }, []);
 
@@ -175,18 +148,6 @@ const LandingPage = () => {
                         opacity: 0.15 + Math.random() * 0.2,
                     }} />
                 ))}
-            </div>
-
-            {/* Floating Brand Eye */}
-            <div className="brand-eye" aria-hidden="true">
-                <div className="brand-eye__outer">
-                    <div className="brand-eye__iris">
-                        <div className="brand-eye__pupil" ref={brandEyeRef}>
-                            <div className="brand-eye__highlight" />
-                        </div>
-                    </div>
-                </div>
-                <span className="brand-eye__label">HOV</span>
             </div>
 
             {/* Premium Agency Navigation */}
