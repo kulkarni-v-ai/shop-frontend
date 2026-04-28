@@ -16,7 +16,6 @@ const LandingPage = () => {
     const heroRef = useRef(null);
     const glowRef = useRef(null);
     const spotlightRef = useRef(null);
-    const spotlightRef = useRef(null);
     const [introComplete, setIntroComplete] = useState(() => {
         return sessionStorage.getItem('hovIntroPlayed') === 'true';
     });
