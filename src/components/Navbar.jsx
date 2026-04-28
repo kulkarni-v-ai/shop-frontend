@@ -11,9 +11,9 @@ function Navbar({ totalItems, selectedCategory, setSelectedCategory, searchQuery
       {/* Main Navigation Bar */}
       <div className="navbar-main">
         {/* Logo */}
-        <Link to="/" className="navbar-logo" style={{ border: 'none' }}>
-          <span className="eye-mark" style={{ width: '18px', height: '10px', border: '1.5px solid #fff', borderRadius: '100% 0', transform: 'rotate(45deg)', position: 'relative', display: 'inline-block' }}></span>
-          HOV
+        <Link to="/" className="navbar-logo" style={{ border: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <img src="/logo.png" alt="HOV" style={{ height: '32px', width: 'auto', borderRadius: '50%' }} />
+          <span style={{ fontWeight: 800, fontSize: '1.25rem', letterSpacing: '-0.5px' }}>HOV</span>
         </Link>
 
         {/* Shop Label */}
