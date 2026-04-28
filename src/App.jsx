@@ -18,8 +18,6 @@ const ProductDetails = lazy(() => import("./pages/ProductDetails"));
 const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
 const Profile = lazy(() => import("./pages/Profile"));
-const AdminLayout = lazy(() => import("./pages/AdminLayout"));
-
 // TODO: Replace with your actual Google Client ID
 const GOOGLE_CLIENT_ID = "382931076466-m0ue6cavrk7g5su9b1k4o1dvtukqvjp0.apps.googleusercontent.com";
 
@@ -188,11 +186,10 @@ function AppShell({
 }) {
   const location = useLocation();
   const isLanding = location.pathname === '/';
-  const isAdmin = location.pathname.startsWith('/admin');
 
   return (
     <>
-      {!isLanding && !isAdmin && (
+      {!isLanding && (
         <Navbar
           totalItems={totalItems}
           selectedCategory={selectedCategory}
@@ -202,15 +199,14 @@ function AppShell({
         />
       )}
 
-      <main className={isLanding || isAdmin ? '' : 'main-content'}>
+      <main className={isLanding ? '' : 'main-content'}>
         <Suspense fallback={
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
             <div className="loading-spinner" />
           </div>
         }>
           <Routes>
-            {/* Admin Dashboard Routes */}
-            <Route path="/admin/*" element={<AdminLayout />} />
+            {/* Legacy admin removed */}
 
             <Route
               path="/"
@@ -274,7 +270,7 @@ function AppShell({
         </Suspense>
       </main>
 
-      {!isLanding && !isAdmin && <Footer />}
+      {!isLanding && <Footer />}
 
       {/* Toast Notification */}
       {toast && <div className="toast">{toast}</div>}
