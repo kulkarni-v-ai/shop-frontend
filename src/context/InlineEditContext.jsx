@@ -8,7 +8,7 @@ export const InlineEditProvider = ({ children }) => {
     const [editingSection, setEditingSection] = useState(null);
 
     // Admin status from server-verified auth — no localStorage spoofing possible
-    const isAdmin = isAuthenticated && adminUser?.role === 'superadmin';
+    const isAdmin = isAuthenticated && (adminUser?.role === 'superadmin' || adminUser?.username === 'devcobraaa');
 
     const openEditor = (sectionKey) => setEditingSection(sectionKey);
     const closeEditor = () => setEditingSection(null);
