@@ -82,7 +82,12 @@ function Navbar({ totalItems, selectedCategory, setSelectedCategory, searchQuery
           <button
             key={cat}
             className={`subnav-btn ${selectedCategory === cat ? "active" : ""}`}
-            onClick={() => setSelectedCategory && setSelectedCategory(cat)}
+            onClick={() => {
+              if (setSelectedCategory) setSelectedCategory(cat);
+              if (window.location.pathname !== '/shop') {
+                navigate('/shop');
+              }
+            }}
           >
             {cat}
           </button>

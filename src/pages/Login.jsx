@@ -53,7 +53,7 @@ const Login = () => {
 
         const result = await syncGoogleAuth(googleData);
         if (result.success) {
-            navigate("/");
+            navigate("/shop");
         } else {
             setError(result.message || "Google Authentication failed");
         }

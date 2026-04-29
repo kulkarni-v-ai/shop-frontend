@@ -52,6 +52,7 @@ const AgencyNav = () => {
             <div className="agency-nav__inner">
                 {/* Logo */}
                 <div className="agency-nav__logo" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+                    <img src="/logo.png" alt="HOV" style={{ height: '32px', width: 'auto', borderRadius: '50%', marginRight: '8px' }} />
                     <span className="eye-mark"></span>
                     <span className="agency-nav__logo-text">HOV</span>
                 </div>
