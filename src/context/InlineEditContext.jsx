@@ -1,14 +1,14 @@
 import { createContext, useContext, useState } from 'react';
-import { useAdminAuth } from './AdminAuthContext';
+import { useAuth } from './AuthContext';
 
 const InlineEditContext = createContext();
 
 export const InlineEditProvider = ({ children }) => {
-    const { isAuthenticated, adminUser } = useAdminAuth();
+    const { user } = useAuth();
     const [editingSection, setEditingSection] = useState(null);
 
     // Admin status from server-verified auth — no localStorage spoofing possible
-    const isAdmin = isAuthenticated && (adminUser?.role === 'superadmin' || adminUser?.username === 'devcobraaa');
+    const isAdmin = !!user && (user.role === 'superadmin' || user.username === 'devcobraaa');
 
     const openEditor = (sectionKey) => setEditingSection(sectionKey);
     const closeEditor = () => setEditingSection(null);
