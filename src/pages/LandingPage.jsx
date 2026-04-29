@@ -21,6 +21,38 @@ const LandingPage = () => {
     });
     const [shopProducts, setShopProducts] = useState([]);
 
+    // Contact Form State
+    const [contactIdentity, setContactIdentity] = useState('');
+    const [contactEmail, setContactEmail] = useState('');
+    const [contactVision, setContactVision] = useState('');
+    const [isContactSubmitting, setIsContactSubmitting] = useState(false);
+    const [contactSuccess, setContactSuccess] = useState('');
+    const [contactError, setContactError] = useState('');
+
+    const handleContactSubmit = async (e) => {
+        e.preventDefault();
+        setIsContactSubmitting(true);
+        setContactSuccess('');
+        setContactError('');
+
+        try {
+            const API = (await import('../api')).default;
+            const res = await API.post('/api/contact', {
+                identity: contactIdentity,
+                email: contactEmail,
+                visionDetails: contactVision
+            });
+            setContactSuccess(res.data?.message || "Your vision is shared successfully we'll be connecting to you soon");
+            setContactIdentity('');
+            setContactEmail('');
+            setContactVision('');
+        } catch (error) {
+            setContactError(error.response?.data?.message || 'Failed to send request. Please try again.');
+        } finally {
+            setIsContactSubmitting(false);
+        }
+    };
+
     // Connect to CMS Data
     const { cmsData } = useCMS();
     const { hero, services, portfolio, statistics, shopHighlight, cta } = cmsData;
@@ -632,17 +664,21 @@ const LandingPage = () => {
                         </div>
                     </div>
                     <div className="contact-form">
-                        <form onSubmit={(e) => { e.preventDefault(); alert('Discovery session requested.'); }}>
+                        <form onSubmit={handleContactSubmit}>
+                            {contactSuccess && <div style={{ padding: '12px', marginBottom: '20px', backgroundColor: 'rgba(5, 150, 105, 0.1)', color: '#10b981', borderRadius: '6px', fontSize: '14px' }}>{contactSuccess}</div>}
+                            {contactError && <div style={{ padding: '12px', marginBottom: '20px', backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', borderRadius: '6px', fontSize: '14px' }}>{contactError}</div>}
                             <div className="form-group">
-                                <input type="text" placeholder="Identity" required />
+                                <input type="text" placeholder="Identity" value={contactIdentity} onChange={(e) => setContactIdentity(e.target.value)} required />
                             </div>
                             <div className="form-group">
-                                <input type="email" placeholder="Insight Channel (Email)" required />
+                                <input type="email" placeholder="Insight Channel (Email)" value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} required />
                             </div>
                             <div className="form-group">
-                                <textarea placeholder="Vision Details" rows="4" required></textarea>
+                                <textarea placeholder="Vision Details" rows="4" value={contactVision} onChange={(e) => setContactVision(e.target.value)} required></textarea>
                             </div>
-                            <button type="submit" className="btn-submit">Request Discovery</button>
+                            <button type="submit" className="btn-submit" disabled={isContactSubmitting}>
+                                {isContactSubmitting ? 'Submitting...' : 'Request Discovery'}
+                            </button>
                         </form>
                     </div>
                 </div>
