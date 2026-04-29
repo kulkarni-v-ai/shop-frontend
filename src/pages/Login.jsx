@@ -88,6 +88,9 @@ const Login = () => {
                             placeholder="••••••••"
                             required
                         />
+                        <div style={{ textAlign: "right", marginTop: "8px" }}>
+                            <Link to="/forgot-password" style={{ fontSize: "12px", color: "var(--color-primary)", textDecoration: "none" }}>Forgot Password?</Link>
+                        </div>
                     </div>
 
                     <button type="submit" className="login-button" disabled={loading}>

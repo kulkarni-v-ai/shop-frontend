@@ -65,6 +65,10 @@ const Profile = ({ showToast }) => {
 
     const handleUpdateProfile = async (e) => {
         e.preventDefault();
+
+        const isConfirmed = window.confirm("Are you sure you want to update your profile data?");
+        if (!isConfirmed) return;
+
         if (password && password !== confirmPassword) {
             setError("Passwords do not match");
             return;

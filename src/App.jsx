@@ -18,6 +18,8 @@ const ProductDetails = lazy(() => import("./pages/ProductDetails"));
 const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
 const Profile = lazy(() => import("./pages/Profile"));
+const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 // TODO: Replace with your actual Google Client ID
 const GOOGLE_CLIENT_ID = "382931076466-m0ue6cavrk7g5su9b1k4o1dvtukqvjp0.apps.googleusercontent.com";
 
@@ -231,6 +233,8 @@ function AppShell({
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/profile" element={<Profile showToast={showToast} />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
 
             <Route
               path="/cart"
